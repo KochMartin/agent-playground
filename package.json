@@ -1,0 +1,10 @@
+{
+  "name": "agent-playground",
+  "version": "1.0.0",
+  "description": "Agent playground utility library",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
