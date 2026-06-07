@@ -1,0 +1,9 @@
+{
+  "name": "agent-playground",
+  "version": "1.0.0",
+  "description": "Agent Playground",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test src/Queue.test.mjs"
+  }
+}
