@@ -1,0 +1,10 @@
+{
+  "name": "agent-playground",
+  "version": "1.0.0",
+  "description": "Agent playground utilities",
+  "main": "src/toCsv.js",
+  "scripts": {
+    "test": "node --test src/toCsv.test.js"
+  },
+  "license": "MIT"
+}

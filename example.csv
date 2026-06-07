@@ -1,0 +1,6 @@
+id,name,department,salary,active
+1,Alice,Engineering,95000,true
+2,Bob,Marketing,72000,true
+3,Charlie,"Sales, East",68000,false
+4,Diana,Engineering,102000,true
+5,Eve,HR,61000,true
