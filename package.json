@@ -1,0 +1,10 @@
+{
+  "name": "agent-playground",
+  "version": "1.0.0",
+  "description": "Agent Playground utilities",
+  "main": "src/mathUtils.js",
+  "scripts": {
+    "test": "node --test src/mathUtils.test.js"
+  },
+  "license": "MIT"
+}
