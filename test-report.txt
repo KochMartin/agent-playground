@@ -1,0 +1,77 @@
+TAP version 13
+# Subtest: toCsv
+    # Subtest: returns empty string for an empty array
+    ok 1 - returns empty string for an empty array
+      ---
+      duration_ms: 0.74929
+      type: 'test'
+      ...
+    # Subtest: returns empty string for non-array input
+    ok 2 - returns empty string for non-array input
+      ---
+      duration_ms: 0.10696
+      type: 'test'
+      ...
+    # Subtest: serializes a single object with simple values
+    ok 3 - serializes a single object with simple values
+      ---
+      duration_ms: 0.15955
+      type: 'test'
+      ...
+    # Subtest: serializes multiple rows
+    ok 4 - serializes multiple rows
+      ---
+      duration_ms: 0.17232
+      type: 'test'
+      ...
+    # Subtest: escapes values that contain a comma
+    ok 5 - escapes values that contain a comma
+      ---
+      duration_ms: 0.1258
+      type: 'test'
+      ...
+    # Subtest: escapes values that contain double-quotes
+    ok 6 - escapes values that contain double-quotes
+      ---
+      duration_ms: 0.98729
+      type: 'test'
+      ...
+    # Subtest: escapes values that contain newlines
+    ok 7 - escapes values that contain newlines
+      ---
+      duration_ms: 0.122213
+      type: 'test'
+      ...
+    # Subtest: treats null and undefined values as empty strings
+    ok 8 - treats null and undefined values as empty strings
+      ---
+      duration_ms: 0.217048
+      type: 'test'
+      ...
+    # Subtest: uses column order from the first object's keys
+    ok 9 - uses column order from the first object's keys
+      ---
+      duration_ms: 0.285721
+      type: 'test'
+      ...
+    # Subtest: handles numeric and boolean values
+    ok 10 - handles numeric and boolean values
+      ---
+      duration_ms: 0.328506
+      type: 'test'
+      ...
+    1..10
+ok 1 - toCsv
+  ---
+  duration_ms: 9.256021
+  type: 'suite'
+  ...
+1..1
+# tests 10
+# suites 1
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 95.961963
