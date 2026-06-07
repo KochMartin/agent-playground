@@ -1,0 +1,10 @@
+{
+  "functionName": "parseCsvLine",
+  "sourceFile": "parseCsvLine.js",
+  "requirementId": "RQ071024",
+  "runDate": "2026-06-07",
+  "totalTests": 15,
+  "passed": 15,
+  "failed": 0,
+  "result": "PASS"
+}
