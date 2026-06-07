@@ -1,0 +1,11 @@
+{
+  "name": "agent-playground",
+  "version": "1.0.0",
+  "description": "Agent playground repo",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
