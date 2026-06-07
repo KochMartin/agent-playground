@@ -1,0 +1,23 @@
+{
+  "name": "repo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test src/lastChar.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KochMartin/agent-playground.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KochMartin/agent-playground/issues"
+  },
+  "homepage": "https://github.com/KochMartin/agent-playground#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
