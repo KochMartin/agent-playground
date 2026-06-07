@@ -1,0 +1,12 @@
+{
+  "name": "agent-playground",
+  "version": "1.0.0",
+  "description": "Agent Playground",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
