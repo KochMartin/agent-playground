@@ -1,0 +1,13 @@
+{
+  "name": "agent-playground",
+  "version": "1.0.0",
+  "description": "Agent Playground repository",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test src/Stack.test.js"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "license": "MIT"
+}
