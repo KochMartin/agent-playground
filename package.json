@@ -1,0 +1,19 @@
+{
+  "name": "per-tenant-admission-limiter",
+  "version": "1.0.0",
+  "description": "Per-tenant concurrency admission limiter with burst queue support",
+  "main": "dist/admission/index.js",
+  "types": "dist/admission/index.d.ts",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "test": "jest --runInBand",
+    "test:ci": "jest --runInBand --ci --coverage"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.9.2",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
+    "typescript": "^6.0.3"
+  }
+}
