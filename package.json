@@ -1,0 +1,13 @@
+{
+  "name": "agent-platform-e2e-tests",
+  "version": "1.0.0",
+  "description": "E2E tests verifying agent platform fixes: AcpClient race condition, item type handling, and status alias resolution",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test test/**/*.test.js",
+    "test:race": "node --test test/acp-client-race.test.js",
+    "test:item-type": "node --test test/item-type.test.js",
+    "test:status-alias": "node --test test/status-alias.test.js"
+  },
+  "license": "MIT"
+}
