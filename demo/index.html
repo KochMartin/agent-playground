@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Node – Demo</title>
+  <style>
+    /* ---------- reset / base ---------- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      gap: 1.5rem;
+    }
+    h1 { font-size: 1.5rem; letter-spacing: .05em; color: #94a3b8; }
+
+    /* ---------- live-node-ui component ---------- */
+    .live-node-ui {
+      width: 560px;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #1e293b;
+    }
+
+    .lnu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .6rem 1rem;
+      background: #0f172a;
+      border-bottom: 1px solid #334155;
+    }
+    .lnu-label { font-weight: 600; font-size: .9rem; color: #cbd5e1; }
+    .lnu-badge {
+      font-size: .7rem;
+      font-weight: 700;
+      padding: .15rem .55rem;
+      border-radius: 999px;
+      color: #fff;
+      letter-spacing: .06em;
+    }
+
+    .lnu-toolbar {
+      display: flex;
+      gap: .5rem;
+      padding: .6rem 1rem;
+      border-bottom: 1px solid #334155;
+    }
+    .lnu-btn {
+      padding: .35rem .8rem;
+      border: none;
+      border-radius: 6px;
+      font-size: .8rem;
+      cursor: pointer;
+      font-weight: 600;
+      background: #334155;
+      color: #e2e8f0;
+      transition: background .15s;
+    }
+    .lnu-btn:hover:not(:disabled) { background: #475569; }
+    .lnu-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .lnu-btn--start { background: #065f46; color: #a7f3d0; }
+    .lnu-btn--start:hover:not(:disabled) { background: #047857; }
+    .lnu-btn--stop  { background: #7f1d1d; color: #fca5a5; }
+    .lnu-btn--stop:hover:not(:disabled)  { background: #991b1b; }
+
+    .lnu-log {
+      font-size: .78rem;
+      font-family: "Courier New", monospace;
+    }
+    .lnu-log-header {
+      display: grid;
+      grid-template-columns: 50px 100px 1fr;
+      padding: .4rem 1rem;
+      background: #0f172a;
+      color: #64748b;
+      font-weight: 700;
+      font-size: .72rem;
+      letter-spacing: .05em;
+      border-bottom: 1px solid #334155;
+    }
+    .lnu-log-body {
+      height: 260px;
+      overflow-y: auto;
+      padding: .3rem 0;
+    }
+    .lnu-log-row {
+      display: grid;
+      grid-template-columns: 50px 100px 1fr;
+      padding: .2rem 1rem;
+      border-bottom: 1px solid #1e293b;
+    }
+    .lnu-log-row:nth-child(odd) { background: #1a2537; }
+    .lnu-log-row--error { color: #f87171; grid-column: 1 / -1; }
+    .lnu-col-seq { color: #64748b; }
+    .lnu-col-ts  { color: #94a3b8; }
+    .lnu-col-payload { color: #a5f3fc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <h1>⬤ Live Node – Capture Demo</h1>
+
+  <div id="mount-sensor"></div>
+  <div id="mount-weather"></div>
+
+  <script type="module">
+    // Inline minimal ports of LiveNode, MockSource and LiveNodeUI so this demo
+    // works without a build step.  In production you would import from the
+    // compiled dist/ bundle.
+
+    // ---- TypedEmitter ----
+    class TypedEmitter {
+      constructor() { this._l = new Map(); }
+      on(e, fn) { (this._l.get(e) ?? (this._l.set(e, new Set()), this._l.get(e))).add(fn); return this; }
+      off(e, fn) { this._l.get(e)?.delete(fn); return this; }
+      emit(e, d) { this._l.get(e)?.forEach(fn => fn(d)); }
+    }
+
+    // ---- LiveNode ----
+    class LiveNode extends TypedEmitter {
+      constructor(source, { label = "LiveNode", maxFrames = 1000 } = {}) {
+        super();
+        this.label = label;
+        this.maxFrames = maxFrames;
+        this._state = "idle";
+        this._frames = [];
+        this._seq = 0;
+        this._src = source;
+        source.onData(p => this._onData(p));
+        source.onError(c => this._onErr(c));
+      }
+      get state() { return this._state; }
+      get frames() { return this._frames; }
+      get latest() { return this._frames[this._frames.length - 1]; }
+      start() {
+        if (this._state !== "idle" && this._state !== "stopped") return;
+        this._tx("connecting");
+        try { this._src.connect(); this._tx("capturing"); }
+        catch(e) { this._onErr(e); }
+      }
+      stop() {
+        if (this._state !== "capturing" && this._state !== "connecting") return;
+        this._src.disconnect(); this._tx("stopped");
+      }
+      clear() {
+        this._frames = []; this._seq = 0; this.emit("cleared", undefined);
+      }
+      reset() { this.stop(); this.clear(); this._tx("idle"); }
+      _onData(payload) {
+        if (this._state !== "capturing") return;
+        const frame = { seq: this._seq++, timestamp: new Date().toISOString(), payload };
+        this._frames.push(frame);
+        if (this._frames.length > this.maxFrames) this._frames.shift();
+        this.emit("frame", frame);
+      }
+      _onErr(cause) {
+        const message = cause instanceof Error ? cause.message : String(cause);
+        this._tx("error"); this.emit("error", { message, cause });
+      }
+      _tx(next) {
+        const prev = this._state; this._state = next;
+        if (prev !== next) this.emit("statechange", { previous: prev, current: next });
+      }
+    }
+
+    // ---- MockSource ----
+    class MockSource {
+      constructor({ intervalMs = 200, payloadFactory } = {}) {
+        this._ms = intervalMs;
+        this._factory = payloadFactory ?? (n => ({ value: +(Math.random().toFixed(3)), count: n }));
+        this._t = null; this._n = 0; this._dc = null; this._ec = null;
+      }
+      onData(cb) { this._dc = cb; }
+      onError(cb) { this._ec = cb; }
+      connect() {
+        this._t = setInterval(() => { this._dc?.(this._factory(this._n++)); }, this._ms);
+      }
+      disconnect() { clearInterval(this._t); this._t = null; }
+    }
+
+    // ---- LiveNodeUI ----
+    const STATE_COLORS = {
+      idle: "#6b7280", connecting: "#f59e0b", capturing: "#10b981",
+      stopped: "#3b82f6", error: "#ef4444",
+    };
+
+    class LiveNodeUI {
+      constructor(node, { maxVisible = 50, onExport } = {}) {
+        this._node = node;
+        this._maxVisible = maxVisible;
+        this._onExport = onExport ?? (frames => this._defExport(frames));
+        this._startedAt = null;
+        this.element = this._build();
+        this._sync(node.state);
+        node.on("statechange", ({ current }) => this._sync(current));
+        node.on("frame", f => this._row(f));
+        node.on("cleared", () => { this._logBody.innerHTML = ""; this._exportBtn.disabled = true; this._sync(node.state); });
+        node.on("error", ({ message }) => {
+          const r = document.createElement("div");
+          r.className = "lnu-log-row lnu-log-row--error";
+          r.textContent = `⚠ Error: ${message}`;
+          this._logBody.appendChild(r);
+        });
+      }
+      _build() {
+        const root = document.createElement("div");
+        root.className = "live-node-ui";
+        root.innerHTML = `
+          <div class="lnu-header">
+            <span class="lnu-label">${this._node.label}</span>
+            <span class="lnu-badge"></span>
+          </div>
+          <div class="lnu-toolbar">
+            <button class="lnu-btn lnu-btn--start">▶ Start</button>
+            <button class="lnu-btn lnu-btn--stop">■ Stop</button>
+            <button class="lnu-btn lnu-btn--clear">✕ Clear</button>
+            <button class="lnu-btn lnu-btn--export">⬇ Export</button>
+          </div>
+          <div class="lnu-log">
+            <div class="lnu-log-header">
+              <span class="lnu-col-seq">#</span>
+              <span class="lnu-col-ts">Time</span>
+              <span class="lnu-col-payload">Payload</span>
+            </div>
+            <div class="lnu-log-body"></div>
+          </div>`;
+        this._badge     = root.querySelector(".lnu-badge");
+        this._startBtn  = root.querySelector(".lnu-btn--start");
+        this._stopBtn   = root.querySelector(".lnu-btn--stop");
+        this._clearBtn  = root.querySelector(".lnu-btn--clear");
+        this._exportBtn = root.querySelector(".lnu-btn--export");
+        this._logBody   = root.querySelector(".lnu-log-body");
+        this._startBtn.onclick  = () => { this._startedAt = Date.now(); this._node.start(); };
+        this._stopBtn.onclick   = () => this._node.stop();
+        this._clearBtn.onclick  = () => this._node.clear();
+        this._exportBtn.onclick = () => this._onExport(this._node.frames);
+        return root;
+      }
+      _sync(state) {
+        this._badge.textContent = state.toUpperCase();
+        this._badge.style.background = STATE_COLORS[state];
+        this._startBtn.disabled  = state === "capturing" || state === "connecting";
+        this._stopBtn.disabled   = state !== "capturing" && state !== "connecting";
+        this._exportBtn.disabled = this._node.frames.length === 0;
+      }
+      _row(frame) {
+        const d = new Date(frame.timestamp);
+        const ts = d.toLocaleTimeString(undefined, { hour12: false });
+        const r = document.createElement("div");
+        r.className = "lnu-log-row";
+        r.innerHTML = `<span class="lnu-col-seq">${frame.seq}</span><span class="lnu-col-ts">${ts}</span><span class="lnu-col-payload">${JSON.stringify(frame.payload)}</span>`;
+        this._logBody.appendChild(r);
+        while (this._logBody.children.length > this._maxVisible) this._logBody.removeChild(this._logBody.firstChild);
+        this._logBody.scrollTop = this._logBody.scrollHeight;
+        this._exportBtn.disabled = false;
+      }
+      _defExport(frames) {
+        const b = new Blob([JSON.stringify(frames, null, 2)], { type: "application/json" });
+        const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(b), download: `${this._node.label}-${Date.now()}.json` });
+        a.click(); URL.revokeObjectURL(a.href);
+      }
+    }
+
+    // ---- Wire up two demo nodes ----
+    const sensorNode = new LiveNode(
+      new MockSource({ intervalMs: 300, payloadFactory: n => ({ sensor: "temp", value: +(20 + Math.random() * 5).toFixed(2), n }) }),
+      { label: "sensor / temperature", maxFrames: 200 }
+    );
+    document.getElementById("mount-sensor").appendChild(new LiveNodeUI(sensorNode).element);
+
+    const weatherNode = new LiveNode(
+      new MockSource({ intervalMs: 500, payloadFactory: n => ({ sensor: "wind", speed: +(Math.random() * 30).toFixed(1), dir: ["N","NE","E","SE","S","SW","W","NW"][n % 8] }) }),
+      { label: "sensor / wind-speed", maxFrames: 200 }
+    );
+    document.getElementById("mount-weather").appendChild(new LiveNodeUI(weatherNode).element);
+  </script>
+</body>
+</html>
