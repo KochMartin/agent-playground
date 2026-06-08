@@ -1,0 +1,10 @@
+{
+  "name": "agent-playground",
+  "version": "1.0.0",
+  "description": "Number-theory utilities: gcd, lcm, isPrime",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
