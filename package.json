@@ -1,0 +1,10 @@
+{
+  "name": "utility-lib",
+  "version": "1.0.0",
+  "description": "Shared utility helpers",
+  "main": "src/utils.js",
+  "scripts": {
+    "test": "node --test src/utils.test.js"
+  },
+  "license": "MIT"
+}
