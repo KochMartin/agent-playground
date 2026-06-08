@@ -1,0 +1,9 @@
+{
+  "name": "agent-playground",
+  "version": "1.0.0",
+  "description": "String utility functions for soak requirement #71052",
+  "main": "src/stringUtils.js",
+  "scripts": {
+    "test": "node --test src/__tests__/stringUtils.test.js"
+  }
+}

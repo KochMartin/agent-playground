@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-06-08T00:14:00.000Z",
+  "overall": {
+    "passed": 37,
+    "failed": 0,
+    "skipped": 0,
+    "status": "PASS"
+  },
+  "suites": [
+    {
+      "suite": "reverse",
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "capitalize",
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "countVowels",
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "truncate",
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "slugify",
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "wordCount",
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    }
+  ]
+}
