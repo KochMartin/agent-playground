@@ -1,0 +1,29 @@
+{
+  "name": "pty-attach",
+  "version": "1.0.0",
+  "description": "Live PTY capture – attach to a pseudo-terminal and stream its output in real time",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --runInBand --forceExit",
+    "lint": "eslint src/**/*.ts"
+  },
+  "keywords": ["pty", "terminal", "capture", "live", "pseudo-terminal"],
+  "license": "MIT",
+  "dependencies": {
+    "node-pty": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.5",
+    "typescript": "^5.5.2"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": ["**/tests/**/*.test.ts"]
+  }
+}
