@@ -1,0 +1,13 @@
+{
+  "name": "hello-world",
+  "version": "1.0.0",
+  "description": "Simple hello world script with tests",
+  "main": "hello.js",
+  "scripts": {
+    "start": "node hello.js",
+    "test": "node hello.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
